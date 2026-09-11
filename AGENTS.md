@@ -18,3 +18,4 @@
 ## Notes
 
 - Sprint 2 candidate and rubric workbench has been added
+- Sprint 3 evaluation scoring flow has been added.
