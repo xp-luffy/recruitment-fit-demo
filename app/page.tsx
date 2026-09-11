@@ -1,21 +1,56 @@
-export default function Home() {
+import Link from "next/link";
+import { CandidateList } from "@/components/CandidateList";
+import { listCandidatesRanked, listRubricsWithCriteria } from "@/lib/data/recruitment";
+
+export default async function Home() {
+  const [candidates, rubrics] = await Promise.all([
+    listCandidatesRanked(),
+    listRubricsWithCriteria(),
+  ]);
+  const evaluated = candidates.filter((candidate) => candidate.overall_score !== null).length;
+
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-xl text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">vibe-stack-supabase</h1>
-        <p className="text-neutral-500">
-          Edit{" "}
-          <code className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm">
-            app/page.tsx
-          </code>{" "}
-          to start building.
-        </p>
-        <p className="text-xs text-neutral-400">
-          See{" "}
-          <code className="bg-neutral-100 px-1.5 py-0.5 rounded">CLAUDE.md</code>{" "}
-          for project conventions and gstack workflow.
-        </p>
-      </div>
-    </main>
+    <div className="workbench">
+      <section className="page-head">
+        <div>
+          <p className="eyebrow">Recruitment Fit Scorer</p>
+          <h1>Rank candidates by scored evidence.</h1>
+        </div>
+        <div className="head-actions">
+          <Link className="button button-secondary" href="/rubrics">
+            Rubrics
+          </Link>
+          <Link className="button button-primary" href="/evaluations/new">
+            New evaluation
+          </Link>
+        </div>
+      </section>
+
+      <section className="metrics-strip" aria-label="Pipeline summary">
+        <div>
+          <span>{candidates.length}</span>
+          <p>Candidates</p>
+        </div>
+        <div>
+          <span>{evaluated}</span>
+          <p>Scored</p>
+        </div>
+        <div>
+          <span>{rubrics.length}</span>
+          <p>Rubrics</p>
+        </div>
+      </section>
+
+      <section className="section-heading">
+        <div>
+          <h2>Ranked list</h2>
+          <p>Overall score is the average of saved evaluations.</p>
+        </div>
+        <Link className="button button-secondary" href="/candidates/new">
+          New candidate
+        </Link>
+      </section>
+      <CandidateList candidates={candidates} />
+    </div>
   );
 }
