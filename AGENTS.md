@@ -13,3 +13,8 @@
 ## Architecture
 
 - Sprint 1 completed: data model and scoring engine have been implemented.
+- Sprint 2 introduces a rubric workbench, building on the data model and scoring engine from Sprint 1.
+
+## Notes
+
+- Sprint 2 candidate and rubric workbench has been added
