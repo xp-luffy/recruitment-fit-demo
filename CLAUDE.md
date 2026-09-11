@@ -23,3 +23,4 @@
 
 - Sprint 2 candidate and rubric workbench has been added
 - Sprint 3 evaluation scoring flow has been added.
+- Next.js and dependencies were upgraded to clear audit findings.
