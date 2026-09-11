@@ -10,6 +10,10 @@
 - `lint`: `next lint`
 - `start`: `next start`
 
+## Decisions
+
+- Deployment is triggered automatically after establishing a git connection.
+
 ## Architecture
 
 - Sprint 1 completed: data model and scoring engine have been implemented.
