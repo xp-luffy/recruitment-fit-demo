@@ -91,15 +91,32 @@ create policy "audit_logs_v1_read" on audit_logs for select using (true);
 drop policy if exists "audit_logs_v1_write" on audit_logs;
 create policy "audit_logs_v1_write" on audit_logs for insert with check (true);
 
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on candidates, rubrics, criteria, evaluations, scores to anon, authenticated;
+grant select, insert on audit_logs to anon, authenticated;
+
 insert into rubrics (id, name, role) values
   ('11111111-1111-1111-1111-111111111111', 'Engineering Hire', 'Senior Backend Engineer')
 on conflict (id) do nothing;
 
-insert into criteria (rubric_id, name, description, weight, keywords) values
-  ('11111111-1111-1111-1111-111111111111', 'Culture Fit', 'Alignment with team values and collaboration style', 1.0, array['team','collaborat','values','ownership','help']),
-  ('11111111-1111-1111-1111-111111111111', 'Capability Fit', 'Technical depth and relevant experience', 2.0, array['system','scale','architecture','debug','performance','api','database']),
-  ('11111111-1111-1111-1111-111111111111', 'Potential Fit', 'Growth mindset and learning trajectory', 1.0, array['learn','growth','curious','adapt','mentor','improve'])
-on conflict do nothing;
+delete from scores
+where evaluation_id in (
+  '33333333-3333-3333-3333-333333333331',
+  '33333333-3333-3333-3333-333333333332'
+);
+
+delete from criteria
+where rubric_id = '11111111-1111-1111-1111-111111111111';
+
+insert into criteria (id, rubric_id, name, description, weight, keywords) values
+  ('44444444-4444-4444-4444-444444444441', '11111111-1111-1111-1111-111111111111', 'Culture Fit', 'Alignment with team values and collaboration style', 1.0, array['team','collaborat','values','ownership','help']),
+  ('44444444-4444-4444-4444-444444444442', '11111111-1111-1111-1111-111111111111', 'Capability Fit', 'Technical depth and relevant experience', 2.0, array['system','scale','architecture','debug','performance','api','database']),
+  ('44444444-4444-4444-4444-444444444443', '11111111-1111-1111-1111-111111111111', 'Potential Fit', 'Growth mindset and learning trajectory', 1.0, array['learn','growth','curious','adapt','mentor','improve'])
+on conflict (id) do update set
+  name = excluded.name,
+  description = excluded.description,
+  weight = excluded.weight,
+  keywords = excluded.keywords;
 
 insert into candidates (id, name, role_applied, source, status, overall_score) values
   ('22222222-2222-2222-2222-222222222221', 'Amara Okafor', 'Senior Backend Engineer', 'Referral', 'active', 82),
@@ -113,10 +130,10 @@ insert into evaluations (id, candidate_id, rubric_id, eval_type, raw_text, total
 on conflict (id) do nothing;
 
 insert into scores (evaluation_id, criterion_id, value, justification, source, confidence, review_status) values
-  ('33333333-3333-3333-3333-333333333331', '11111111-1111-1111-1111-111111111111', 4, 'Strong ownership and mentoring language detected', 'rule', null, 'unreviewed'),
-  ('33333333-3333-3333-3333-333333333331', '11111111-1111-1111-1111-111111111111', 5, 'Deep system design and production debugging experience', 'rule', null, 'unreviewed'),
-  ('33333333-3333-3333-3333-333333333331', '11111111-1111-1111-1111-111111111111', 4, 'Continuous learning and adaptation evident', 'rule', null, 'unreviewed'),
-  ('33333333-3333-3333-3333-333333333332', '11111111-1111-1111-1111-111111111111', 3, 'Standard team collaboration, limited detail', 'rule', null, 'unreviewed'),
-  ('33333333-3333-3333-3333-333333333332', '11111111-1111-1111-1111-111111111111', 4, 'Solid API and database experience', 'rule', null, 'unreviewed'),
-  ('33333333-3333-3333-3333-333333333332', '11111111-1111-1111-1111-111111111111', 3, 'Interest in learning noted but limited evidence', 'rule', null, 'unreviewed')
+  ('33333333-3333-3333-3333-333333333331', '44444444-4444-4444-4444-444444444441', 4, 'Strong ownership and mentoring language detected', 'rule', null, 'unreviewed'),
+  ('33333333-3333-3333-3333-333333333331', '44444444-4444-4444-4444-444444444442', 5, 'Deep system design and production debugging experience', 'rule', null, 'unreviewed'),
+  ('33333333-3333-3333-3333-333333333331', '44444444-4444-4444-4444-444444444443', 4, 'Continuous learning and adaptation evident', 'rule', null, 'unreviewed'),
+  ('33333333-3333-3333-3333-333333333332', '44444444-4444-4444-4444-444444444441', 3, 'Standard team collaboration, limited detail', 'rule', null, 'unreviewed'),
+  ('33333333-3333-3333-3333-333333333332', '44444444-4444-4444-4444-444444444442', 4, 'Solid API and database experience', 'rule', null, 'unreviewed'),
+  ('33333333-3333-3333-3333-333333333332', '44444444-4444-4444-4444-444444444443', 3, 'Interest in learning noted but limited evidence', 'rule', null, 'unreviewed')
 on conflict do nothing;
